@@ -22,7 +22,6 @@ export class HomePage {
           console.log("Token is", token)
         }
       })
-      console.log("See the stripe data", this.handler);
     }, 1000)
   }
 
