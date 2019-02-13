@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 declare var StripeCheckout;
 
 @Component({
@@ -9,17 +9,22 @@ declare var StripeCheckout;
 export class HomePage {
 
   handler:any;
-  constructor(public navCtrl: NavController) { }
+  constructor(public navCtrl: NavController, private alertCtrl: AlertController) { }
 
   ionViewDidLoad(){
     setTimeout(() => {
       this.handler =  StripeCheckout.configure({
         key: 'YOUR_STRIPE_KEY',
-        image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+        image: 'https://stripe.com/img/documentation/checkout/marketplace.png', // Picture you want to show in pop up
         locale: 'auto',
-        amount: 100,
         token: token => {
-          console.log("Token is", token)
+          // Handle Stripe response
+          let alert=this.alertCtrl.create({
+            title: 'Response from Stripe',
+            message: JSON.stringify(token),
+            buttons:['ok']
+          });
+            alert.present();
         }
       })
     }, 1000)
@@ -27,17 +32,17 @@ export class HomePage {
 
   handlerOpen(){
     this.handler.open({
-      name: 'Test App name',
-      amount: 100
+      name: 'Test App name', // Pass your application name
+      amount: 100 // Pass your billing amount
     });
   }
 
   @HostListener('window:popstate')
   onPopstate() {
-    this.handler.close();
+    this.handler.close(); // To close the pop-up
   }
 
   payButtonClickHandler(){
-    this.handlerOpen();
+    this.handlerOpen(); // To open your stripe pop-up
   }
 }
